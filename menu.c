@@ -220,7 +220,7 @@ void show_error(char *msg)
 
 void set_port(struct port *p)
 {
-    // system("cls");
+    system("cls");
     printf("请输入端口名：");
     scanf("%s", p->name);
 
@@ -232,9 +232,6 @@ void set_port(struct port *p)
 
     printf("请输入端口类型（LAN/WAN）：");
     scanf("%s", p->type);
-
-    printf("%s", p->ip);
-    system("pause");
 }
 
 int add_port(struct port *p, int *num)
