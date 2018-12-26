@@ -21,7 +21,10 @@ int count_list(node_t *head);//计算链表节点个数
 int add_list(node_t *head, int place, elem_t data);//在指定位置插入节点
 int add_list_asc(node_t *head, elem_t data);//升序插入链表
 int remove_node(node_t *head, int place, elem_t *data);//删除指定位置节点
+int get_node(node_t *head, int place, elem_t *data);//获取链表指定位置的数据
+int list_merge(node_t *head1, node_t *head2);//合并两个链表
 int reverse_list(node_t *head);//转置链表
+int find_save_node(node_t *head1, node_t *head2, elem_t *data);//找出两个链表相同的项
 void show_list(node_t *haed);//打印链表
 int empty_list(node_t *head);//清空链表
 int destory_list(node_t **head);//销毁链表
@@ -33,10 +36,18 @@ int main(void)
     add_list(head, 0, 0);
     add_list(head, 1, 1);
     add_list(head, 2, 2);
-    // add_list(head, 1, 6);
+    add_list(head, 1, 6);
 
     show_list(head);
     printf("链表长度：%d \n", count_list(head));
+
+    /*
+    int data = 0;
+    get_node(head, 1, &data);
+    printf("%d\n", data);
+    get_node(head, 4, &data);
+    printf("%d\n", data);
+    */
 
     /*
     int remove;
@@ -45,18 +56,27 @@ int main(void)
     remove_node(head, 7, &remove);
     */
 
-    add_list_asc(head, 3);
-    add_list_asc(head, 1);
-    add_list_asc(head, -1);
+    node_t *head2 = init_list();
+    add_list_asc(head2, 3);
+    add_list_asc(head2, 1);
+    add_list_asc(head2, -1);
+    show_list(head2);
+
+    int data = 0;
+    find_save_node(head, head2, &data);
+    printf("相同的节点为：%d\n", data);
+
+    // list_merge(head, head2);
 
     show_list(head);
 
-    reverse_list(head);
+    // reverse_list(head);
 
-    show_list(head);
-    printf("链表长度：%d \n", count_list(head));
+    // show_list(head);
+    // printf("链表长度：%d \n", count_list(head));
 
     destory_list(&head);
+    destory_list(&head2);
     return 0;
 }
 
@@ -180,7 +200,7 @@ int remove_node(node_t *head, int place, elem_t *data)
         count++;
     }
 
-    if(count != place)
+    if(p == NULL)
     {
         printf("要删除的位置%d不在链表中\n", place);
         return 0;
@@ -191,6 +211,70 @@ int remove_node(node_t *head, int place, elem_t *data)
     free(p);
 
     return 1;
+}
+
+int get_node(node_t *head, int place, elem_t *data)
+{
+    if(head == NULL)
+    {
+        printf("头节点为空\n");
+        return 0;
+    }
+
+    node_t *p = head->next;
+    int count = 0;
+
+    while(p)
+    {
+        if(count == place)
+        {
+            break;
+        }
+        count++;
+        p = p->next;
+    }
+
+    if(p == NULL)
+    {
+        printf("找不到指定位置的节点\n");
+        return 0;
+    }
+
+    *data = p->data;
+
+    return 1;
+}
+
+int find_save_node(node_t *head1, node_t *head2, int *data)
+{
+    if(head1 == NULL || head2 == NULL)
+    {
+        printf("传入的表头为空\n");
+        return 0;
+    }
+    
+    node_t *p1 = head1->next;
+    node_t *p2 = head2->next;
+
+    while(p1)
+    {
+        while(p2)
+        {
+            if(p1->data == p2->data)
+            {
+                *data = p1->data;
+                return 1;
+            }
+            p2 = p2->next;
+        }
+
+        p1 = p1->next;
+        p2 = head2->next;//while循环中，p2已经是NULL，所以要还原为首节点
+    }
+
+    printf("找不到相同的节点\n");
+
+    return 0;
 }
 
 int reverse_list(node_t *head)
@@ -240,6 +324,28 @@ int reverse_list(node_t *head)
         p_first->next = head->next;
         head->next = p_first;
     }
+
+    return 1;
+}
+
+int list_merge(node_t *head1, node_t *head2)
+{
+    if(head1 == NULL || head2 == NULL)
+    {
+        printf("传入的表头为空\n");
+        return 0;
+    }
+
+    node_t *p = head1;
+
+    //找出head1的最后一个节点
+    while(p->next)
+    {
+        p = p->next;
+    }
+
+    p->next = head2->next;
+    head2->next = NULL;
 
     return 1;
 }
