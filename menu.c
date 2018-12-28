@@ -2,12 +2,17 @@
 #include <string.h>
 #include <stdlib.h>
 
-struct port{
+typedef struct port{
     char name[16];
     int status;
     char ip[16];
     char type[4];
-};
+} elem_t;
+
+typedef struct list_node{
+    struct port *node;
+    struct list_node *next;
+} node_t;
 
 int login(void);
 void registry(void);
@@ -17,6 +22,7 @@ void set_ports(struct port **p, int *num);
 void set_port(struct port *p);
 void show_error(char *msg);
 int add_port(struct port *p, int *num);
+node_t *list_init(void);
 
 int main(void)
 {
@@ -246,4 +252,14 @@ int add_port(struct port *p, int *num)
     set_port(p + *num);
     *num += 1;
     return 1;
+}
+
+node_t *list_init(void){
+    node_t *head = (node_t *)malloc(sizeof(node_t));
+    if(head == NULL){
+        printf("¡¥±Ì≥ı ºªØ ß∞‹\n");
+        return NULL;
+    }
+
+    return head;
 }
