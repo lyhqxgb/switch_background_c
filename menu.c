@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #define SYSTEM_CLS system("cls")
 
 typedef struct port{
     char name[16];
     int status;
-    char ip[16];
+    uint32_t ip;
     char type[4];
 } elem_t;
 
@@ -31,8 +32,26 @@ int empty_list(node_t *head, free_fun_t);
 int destroy_list(node_t **head);
 int del_port(node_t *head);//询问用户要删除的端口，并返回删除结果
 
+void trans_int_to_ip(uint32_t num, char *ip)
+{
+    sprintf(ip, "%u.%u.%u.%u", num >> 24, (num >> 16) & 0xff, (num >> 8) & 0xff, num & 0xff);
+}
+
+int trans_ip_to_int(char *ip, uint32_t *num)
+{
+    unsigned long ip_num = 0;
+}
+
+void test(){
+    char ip[16] = {0};
+    trans_int_to_ip(0xfafbfcfd, ip);
+    printf("%s\n", ip);
+}
+
 int main(void)
 {
+    test();
+    exit(1);
     int n;//要操作的菜单项
 
 
