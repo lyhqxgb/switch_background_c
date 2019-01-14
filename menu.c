@@ -32,26 +32,34 @@ int empty_list(node_t *head, free_fun_t);
 int destroy_list(node_t **head);
 int del_port(node_t *head);//询问用户要删除的端口，并返回删除结果
 
+//将整形地址转为字符串地址
 void trans_int_to_ip(uint32_t num, char *ip)
 {
     sprintf(ip, "%u.%u.%u.%u", num >> 24, (num >> 16) & 0xff, (num >> 8) & 0xff, num & 0xff);
 }
 
+//将字符串地址转为整形地址
 int trans_ip_to_int(char *ip, uint32_t *num)
 {
-    unsigned long ip_num = 0;
-}
+    uint32_t tmp = 0;//用来保存每次读取到的数值
+    unsigned long ip_num = 0;//转化后的ip值
+    char *last = NULL;//读取整数后，剩余的字符串位置
+    int count = 0;//统计一共取了多少次数字
+    do{
+        ip_num = strtoul(ip, &last, 10);
+        //将读取到的数字保存到ip_num中
+        tmp = tmp << 8;
+        tmp |= ip_num;
+        ip = last + 1;//将字符串指针后移一位
+    }while(++count < 4);
 
-void test(){
-    char ip[16] = {0};
-    trans_int_to_ip(0xfafbfcfd, ip);
-    printf("%s\n", ip);
+    *num = tmp;
+
+    return 1;
 }
 
 int main(void)
 {
-    test();
-    exit(1);
     int n;//要操作的菜单项
 
 
@@ -197,7 +205,9 @@ void show_ports(node_t *head)
     while(p){
         printf("名称：%s\t", p->node->name);
         printf("状态：%s\t", p->node->status ? "激活" : "禁用");
-        printf("IP：%s\t", p->node->ip);
+        char ip[16] = {0};
+        trans_int_to_ip(p->node->ip, ip);
+        printf("IP：%s\t", ip);
         printf("类型：%s\t", p->node->type);
         printf("\n");
         p = p->next;
@@ -244,16 +254,20 @@ void set_ports(node_t *head, int *num)
         return ;
     }
 
-    int edit_num = tmp - '1';
-
-    //暂时只允许添加9个端口(0-8)
-    if(num >= 0 && edit_num < 9){
-        set_port(head, edit_num);
-    }else{
-        printf("%d", num);
-        show_error("没有这个端口");
-        return ;
+    int edit_num = 0;
+    while(tmp >= '0' && tmp <= '9'){
+        //将用户输入的数转为整数
+        tmp -= '0';
+        edit_num = edit_num * 10 + tmp;
+        tmp = getc(stdin);
     }
+
+    for(int i=0; i<9; i++){
+        add_port(head);
+    }
+
+    set_port(head, edit_num--);
+
 
 }
 
@@ -276,7 +290,7 @@ void set_port(node_t *head, int place)
         p = p->next;
         count++;
     }
-    if(p == NULL){
+    if(count != place){
         printf("找不到可以设置的端口\n");
         exit(1);
     }
@@ -287,8 +301,10 @@ void set_port(node_t *head, int place)
     printf("请输入端口状态：0：禁用，1：启用");
     scanf("%d", &p->node->status);
 
+    char ip[16] = {0};
     printf("请输入ip地址：");
-    scanf("%s", p->node->ip);
+    scanf("%s", ip);
+    trans_ip_to_int(ip, &(p->node->ip));
 
     printf("请输入端口类型（LAN/WAN）：");
     scanf("%s", p->node->type);
