@@ -183,7 +183,8 @@ void show_menu(void)
         switch(operate){
             case 1: show_ports(head);
                 break;
-            case 2: set_ports(head, &num);
+            case 2: 
+                set_ports(head, &num);
                 break;
             case 3:
                 SYSTEM_CLS;
@@ -262,12 +263,7 @@ void set_ports(node_t *head, int *num)
         tmp = getc(stdin);
     }
 
-    for(int i=0; i<9; i++){
-        add_port(head);
-    }
-
     set_port(head, edit_num--);
-
 
 }
 
@@ -367,7 +363,7 @@ int empty_list(node_t *head, free_fun_t fun)
     while(p){
         first = p;
         p = p->next;
-        fun(p);
+        if(p) fun(p);
         count++;
     }
 
