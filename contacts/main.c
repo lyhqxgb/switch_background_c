@@ -1,23 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "list.h"
 
 #define CONT_FILE "contacts.txt" //通讯录保存文件
-
-typedef struct contact{
-    char province[5]; //省
-    char postal[6];   //邮编
-    char name[10];
-    char tel[12];
-    char address[50]; //街道
-    char city[50];    //城市
-
-} cont_t;
-
-typedef struct contact_list{
-    cont_t *data;
-    struct contact_list *next;
-} cont_list_t;
 
 // void new_record(void);
 // void search_menu(void);
