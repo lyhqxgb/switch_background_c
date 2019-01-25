@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdlib.h>
 
 typedef struct contact{
     char province[5]; //省
@@ -15,7 +16,7 @@ typedef struct contact_list{
     struct contact_list *next;
 } cont_list_t;
 
-//添加链表
+//增加一个节点到头部
 int add_list(cont_list_t *head, const cont_t *data);
 //删除链表
 int del_list(cont_list_t *head, int place);
